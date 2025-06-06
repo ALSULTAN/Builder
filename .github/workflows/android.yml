@@ -21,7 +21,7 @@ jobs:
     
     - name: Source
       run: |
-        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}"&DotNetVersionFull=${{env.DOTNET_VER_FULL}}&DotNetDir=${{env.DOTNET_DIR}} -o source.zip
+        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetVersionFull=${{env.DOTNET_VER_FULL}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
         unzip -q source.zip
     
     - name: DotNet
