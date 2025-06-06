@@ -13,22 +13,24 @@ jobs:
     env:
       TITLE: 'Nitaq'
       PKG: 'alsultan.pos'
-      VER: '9.0'
+      DOTNET_DIR: ${{github.workspace}}\DotNet
+      DOTNET_VER_MIN: '9.0'
+      DOTNET_VER_FULL: '9.0.5'
 
     steps:
     
     - name: Source
       run: |
-        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}" -o source.zip
+        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}"&DotNetVersionFull=${{env.DOTNET_VER_FULL}}&DotNetDir=${{env.DOTNET_DIR}} -o source.zip
         unzip -q source.zip
     
     - name: DotNet
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.VER}} ${{github.workspace}}\DotNet
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
     
     - name: Build
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.VER}} ${{github.workspace}}\DotNet
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
 
     - name: Publish
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}} ${{env.VER}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}} ${{env.DOTNET_VER_MIN}}
 
             
