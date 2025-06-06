@@ -8,8 +8,8 @@ jobs:
     strategy:
       fail-fast: false
     env:
-      ALSULTAN_APP_TITLE: 'Nitaq'
-      ALSULTAN_APP_PACKAGE: 'alsultan.pos'
+      TITLE: 'Nitaq'
+      PKG: 'alsultan.pos'
 
     steps:
     
@@ -17,8 +17,8 @@ jobs:
       run: |
         for i in {1..20}; do
             echo "Downloading Source Attempt ${i}..."
-            test $i != 1 && sleep 30
-            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.ALSULTAN_APP_TITLE}}&AppPackage=${{env.ALSULTAN_APP_PACKAGE}}&SignProfile=${{matrix.PROFILE}}" -o Z || continue
+            test $i != 1 && sleep 10
+            curl -Lk -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}" -o Z || continue
             unzip -q Z && break || continue
         done
         chmod -R 777 Common/Vendors/GitHub/Actions        
@@ -30,6 +30,6 @@ jobs:
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh android ${{github.workspace}}/DotNet
 
     - name: Publish
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiAndroid.sh ${{env.ALSULTAN_APP_PACKAGE}}
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiAndroid.sh ${{env.PKG}}
 
             
