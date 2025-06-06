@@ -27,7 +27,7 @@ jobs:
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.sh android ${{github.workspace}}/DotNet
     
     - name: Build
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh ${{matrix.FRAMEWORK}} ${{github.workspace}}/DotNet
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh android ${{github.workspace}}/DotNet
 
     - name: Publish
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiAndroid.sh ${{env.ALSULTAN_APP_PACKAGE}}
