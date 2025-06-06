@@ -4,32 +4,31 @@ on:
 jobs:
   Android:
     name: Android
-    runs-on: ubuntu-latest
+    runs-on: windows-2025
+    defaults:
+      run:
+        shell: cmd
     strategy:
       fail-fast: false
     env:
       TITLE: 'Nitaq'
       PKG: 'alsultan.pos'
+      VER: '9.0'
 
     steps:
     
     - name: Source
       run: |
-        for i in {1..20}; do
-            echo "Downloading Source Attempt ${i}..."
-            test $i != 1 && sleep 10
-            curl -Lk -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}" -o Z || continue
-            unzip -q Z && break || continue
-        done
-        chmod -R 777 Common/Vendors/GitHub/Actions        
+        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}" -o source.zip
+        unzip -q source.zip
     
     - name: DotNet
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.sh android ${{github.workspace}}/DotNet
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.VER}} ${{github.workspace}}\DotNet
     
     - name: Build
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh android ${{github.workspace}}/DotNet
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.VER}} ${{github.workspace}}\DotNet
 
     - name: Publish
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiAndroid.sh ${{env.PKG}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}} ${{env.VER}}
 
             
