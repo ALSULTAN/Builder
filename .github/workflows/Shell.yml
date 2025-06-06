@@ -26,7 +26,7 @@ jobs:
           for i in {1..20}; do
             echo "Downloading Source Attempt ${i}..."
             test $i != 1 && sleep 10
-            curl -LksS -A 'ALSULTAN' "${{secrets.ALSULTAN_API_SERVICE}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
+            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
             unzip -q Z && break || continue
           done
           chmod -R 777 .
@@ -47,7 +47,7 @@ jobs:
         for i in {1..20}; do
             echo "Downloading Source Attempt ${i}..."
             test $i != 1 && sleep 10
-            curl -LksS -A 'ALSULTAN' "${{secrets.ALSULTAN_API_SERVICE}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
+            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
             unzip -q Z && break || continue
         done
         chmod -R 777 .
