@@ -30,7 +30,15 @@ jobs:
     - name: Build
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
 
-    - name: Publish
+    - name: Upload
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}} ${{env.DOTNET_VER_MIN}}
+
+    - name: Google
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON}}
+        packageName: ${{env.PKG}}
+        releaseFiles: ${{github.workspace}}\MAUI\bin\Release\net${{env.DOTNET_VER_MIN}}-android\${{env.PKG}}-Signed.aab
+        track: production
 
             
