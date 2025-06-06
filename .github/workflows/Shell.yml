@@ -1,0 +1,74 @@
+name: Shell Builder
+run-name: ${{inputs.packages}}
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: "Packages"
+        required: true
+        
+concurrency:
+ group: ${{github.workflow}}-${{inputs.packages}}
+ cancel-in-progress: true
+
+jobs:
+    
+  Initialize:  
+    runs-on: ubuntu-latest
+    outputs:
+      includes: ${{steps.create.outputs.includes}}
+
+    steps:
+    - name: Create Builders
+      id: create
+      run: |
+          for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 10
+            curl -LksS -A 'ALSULTAN' "${{secrets.ALSULTAN_API_SERVICE}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
+            unzip -q Z && break || continue
+          done
+          chmod -R 777 .
+          ./Scripts/Build/Ubuntu/Initialize.sh ${{github.event.inputs.packages}}
+    
+
+  Build:
+    needs: Initialize
+    name: ${{matrix.package}} (${{matrix.arch}}/${{matrix.format}})
+    runs-on: ${{matrix.runner}}
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.Initialize.outputs.includes)}}
+
+    steps:
+    - name: Source
+      run: |
+        for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 10
+            curl -LksS -A 'ALSULTAN' "${{secrets.ALSULTAN_API_SERVICE}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
+            unzip -q Z && break || continue
+        done
+        chmod -R 777 .
+
+    - name: Clean
+      if: ${{matrix.big_pkg == 'true' }}
+      run: ./Scripts/Build/Ubuntu/Clean.sh ${{matrix.package}}
+
+    - name: Prepare
+      if: ${{matrix.big_pkg == 'true' }}
+      run: ./Scripts/Build/Ubuntu/Prepare.sh ${{matrix.package}}
+
+    - name: Docker
+      if: ${{matrix.big_pkg == 'false' }}
+      run: ./Scripts/Build/Ubuntu/Docker.sh init ${{matrix.arch}} ${{matrix.on_device}}
+
+    - name: Build
+      run: ./Scripts/Build/Ubuntu/Build.sh ${{matrix.format}} ${{matrix.arch}} ${{matrix.on_device}} ${{matrix.package}}
+
+    - name: Upload
+      run: ./Scripts/Build/Ubuntu/Upload.sh ${{matrix.format}}
+      
+
+      
