@@ -38,7 +38,7 @@ jobs:
       with:
         serviceAccountJsonPlainText: ${{secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON}}
         packageName: ${{env.PKG}}
-        releaseFiles: ${{github.workspace}}\MAUI\bin\Release\net${{env.DOTNET_VER_MIN}}-android\${{env.PKG}}-Signed.aab
+        releaseFiles: package.aab
         track: production
 
             
