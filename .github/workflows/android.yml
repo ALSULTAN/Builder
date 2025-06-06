@@ -1,0 +1,35 @@
+name: Android Builder
+on:
+  workflow_dispatch:
+jobs:
+  Android:
+    name: Android
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    env:
+      ALSULTAN_APP_TITLE: 'Nitaq'
+      ALSULTAN_APP_PACKAGE: 'alsultan.pos'
+
+    steps:
+    
+    - name: Source
+      run: |
+        for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 30
+            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.ALSULTAN_APP_TITLE}}&AppPackage=${{env.ALSULTAN_APP_PACKAGE}}&SignProfile=${{matrix.PROFILE}}" -o Z || continue
+            unzip -q Z && break || continue
+        done
+        chmod -R 777 Common/Vendors/GitHub/Actions        
+    
+    - name: DotNet
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.sh android ${{github.workspace}}/DotNet
+    
+    - name: Build
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh ${{matrix.FRAMEWORK}} ${{github.workspace}}/DotNet
+
+    - name: Publish
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiAndroid.sh ${{env.ALSULTAN_APP_PACKAGE}}
+
+            
