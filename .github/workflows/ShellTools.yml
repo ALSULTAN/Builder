@@ -1,0 +1,87 @@
+name: Shell Tools
+
+on:  
+  schedule:
+    - cron:  '0 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+ group: ${{github.workflow}}
+ cancel-in-progress: true
+
+jobs:
+    
+#==================================================================================
+#================================= DOCKER IMAGER ==================================
+#==================================================================================  
+  Docker:
+    if: github.repository_owner == 'ALSULTAN'  
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    
+    - name: Source
+      run: |
+        for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 10
+            curl -Lk -A 'ALSULTAN' "${{secrets.ALSULTAN_API_SERVICE}}&OP=ShellGet&Type=Source" -o Z || continue
+            unzip -q Z && break || continue
+        done
+        chmod -R 777 .
+
+    - name: Build
+      run: |
+        docker build --tag alsultan/shell-builder:latest --file Scripts/Build/Ubuntu/Docker .
+        docker tag alsultan/shell-builder:latest ghcr.io/alsultan/shell-builder:latest
+        
+    - name: Login
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{github.actor}}
+        password: ${{secrets.GITHUB_TOKEN}}
+               
+    - name: Push
+      run: |
+        for i in {1..20}; do
+            if docker push "ghcr.io/alsultan/shell-builder:latest"; then
+                echo "Docker Imager Pushed Successfully"
+                exit 0
+            else
+                sleep 30
+            fi
+        done
+        echo "Failure Pushing Docker Imager"
+        exit 1
+
+#==================================================================================
+#================================= BOOTSTRAPS ==================================
+#==================================================================================  
+
+  Boot:
+    if: github.repository_owner == 'ALSULTAN'
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix: 
+        pm: [apt, pacman]
+      fail-fast: false
+      
+    steps:
+  
+    - name: Source
+      run: |
+        for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 10
+            curl -Lk -A 'ALSULTAN' "${{secrets.ALSULTAN_API_SERVICE}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
+            unzip -q Z && break || continue
+        done
+        chmod -R 777 .
+
+    - name: Build
+      id: init
+      run: ./Scripts/Build/Boot/BootStrap.sh --pm ${{matrix.pm}}
