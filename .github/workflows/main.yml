@@ -1,0 +1,23 @@
+name: Maui Builder
+on:
+  workflow_dispatch:
+    
+env:
+  TITLE: 'Nitaq'
+  PKG: 'alsultan.pos'
+  DOTNET_DIR: ${{github.workspace}}\DotNet
+  DOTNET_VER_MIN: '9.0'
+  DOTNET_VER_FULL: '9.0.5'
+
+jobs:
+
+  tttt:
+    name: tttt
+    runs-on: macos-15
+
+    steps:
+    
+    - name: s1
+      run: |
+        env
+        
