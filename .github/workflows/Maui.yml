@@ -2,6 +2,13 @@ name: Maui Builder
 on:
   workflow_dispatch:
     
+env:
+  TITLE: 'Nitaq'
+  PKG: 'alsultan.pos'
+  DOTNET_DIR: ${{github.workspace}}\DotNet
+  DOTNET_VER_MIN: '9.0'
+  DOTNET_VER_FULL: '9.0.5'
+
 jobs:
 
   Windows:
@@ -12,12 +19,6 @@ jobs:
         shell: cmd
     strategy:
       fail-fast: false
-    env:
-      TITLE: 'Nitaq'
-      PKG: 'alsultan.pos'
-      DOTNET_DIR: ${{github.workspace}}\DotNet
-      DOTNET_VER_MIN: '9.0'
-      DOTNET_VER_FULL: '9.0.5'
 
     steps:
     
@@ -43,12 +44,6 @@ jobs:
         shell: cmd
     strategy:
       fail-fast: false
-    env:
-      TITLE: 'Nitaq'
-      PKG: 'alsultan.pos'
-      DOTNET_DIR: ${{github.workspace}}\DotNet
-      DOTNET_VER_MIN: '9.0'
-      DOTNET_VER_FULL: '9.0.5'
 
     steps:
     
@@ -69,7 +64,7 @@ jobs:
     - name: Publish
       uses: r0adkll/upload-google-play@v1
       with:
-        serviceAccountJsonPlainText: ${{secrets.AndroidGPA}}
+        serviceAccountJsonPlainText: ${{secrets.AGPA}}
         packageName: ${{env.PKG}}
         releaseFiles: package.aab
 
@@ -88,17 +83,12 @@ jobs:
             PLATFORM: macos
             FRAMEWORK: maccatalyst
             PROFILE: NitaqPosMac
-    env:
-      ALSULTAN_APP_TITLE: 'Nitaq'
-      ALSULTAN_APP_PACKAGE: 'alsultan.pos'
-      DOTNET_DIR: ${{github.workspace}}/DotNet
-      DOTNET_VER_MIN: '9.0'
 
     steps:
     
     - name: Source
       run: |
-        curl -Lk -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.ALSULTAN_APP_TITLE}}&AppPackage=${{env.ALSULTAN_APP_PACKAGE}}&SignProfile=${{matrix.PROFILE}}" -o source.zip
+        curl -Lk -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&SignProfile=${{matrix.PROFILE}}&DotNetVersionFull=${{env.DOTNET_VER_FULL}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
         unzip -q source.zip && chmod -R 777 Common/Vendors/GitHub/Actions        
     
     - name: DotNet
