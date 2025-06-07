@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
     
 jobs:
+
 #==================================================================================
 #==================================== Windows =====================================
 #==================================================================================  
@@ -36,5 +37,4 @@ jobs:
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd windows10.0.19041.0 ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
 
     - name: Upload
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiWindows.cmd ${{env.PKG}} ${{env.DOTNET_VER_MIN}}
-
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiWindows.cmd ${{env.DOTNET_VER_MIN}}
