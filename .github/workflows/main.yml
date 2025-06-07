@@ -19,5 +19,6 @@ jobs:
     
     - name: s1
       run: |
-        env
+        echo -e "\e[1;35m Uploading \e[0m"
+        echo -e '\e[1;35m Uploading \e[0m'
         
