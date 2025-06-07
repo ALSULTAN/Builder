@@ -21,4 +21,7 @@ jobs:
       run: |
         echo -e "\e[1;35m Uploading \e[0m"
         echo -e '\e[1;35m Uploading \e[0m'
+        printf '\n\n\e[1;35m Uploading \e[0m\n\n'
+        printf "\n\n\e[1;35m Uploading \e[0m\n\n"
+        
         
