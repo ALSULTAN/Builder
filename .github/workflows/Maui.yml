@@ -22,12 +22,11 @@ jobs:
     
     - name: Source
       run: |
-        for i in {1..20}; do
-            echo "Downloading Source Attempt ${i}..."
-            test $i != 1 && sleep 10
-            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z || continue
-            unzip -q Z && break || continue
-        done
+        for /L %%A in (1,1,20) do (
+        	echo Downloading Source Attempt %%A...
+        	if not %%A == 1 sleep 10
+        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z && unzip -q Z && goto :eof
+        )
     
     - name: DotNet
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd windows ${{env.DOTNET_DIR}}
@@ -51,12 +50,11 @@ jobs:
     
     - name: Source
       run: |
-        for i in {1..20}; do
-            echo "Downloading Source Attempt ${i}..."
-            test $i != 1 && sleep 10
-            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z || continue
-            unzip -q Z && break || continue
-        done
+        for /L %%A in (1,1,20) do (
+        	echo Downloading Source Attempt %%A...
+        	if not %%A == 1 sleep 10
+        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z && unzip -q Z && goto :eof
+        )
     
     - name: DotNet
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.DOTNET_DIR}}
