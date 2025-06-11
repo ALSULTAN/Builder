@@ -22,8 +22,12 @@ jobs:
     
     - name: Source
       run: |
-        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
-        unzip -q source.zip
+        for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 10
+            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z || continue
+            unzip -q Z && break || continue
+        done
     
     - name: DotNet
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd windows ${{env.DOTNET_DIR}}
@@ -47,8 +51,12 @@ jobs:
     
     - name: Source
       run: |
-        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
-        unzip -q source.zip
+        for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 10
+            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z || continue
+            unzip -q Z && break || continue
+        done
     
     - name: DotNet
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.DOTNET_DIR}}
@@ -89,8 +97,13 @@ jobs:
     
     - name: Source
       run: |
-        curl -Lk -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&SignProfile=${{matrix.PROFILE}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
-        unzip -q source.zip && chmod -R 777 Common/Vendors/GitHub/Actions        
+        for i in {1..20}; do
+            echo "Downloading Source Attempt ${i}..."
+            test $i != 1 && sleep 10
+            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&SignProfile=${{matrix.PROFILE}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z || continue
+            unzip -q Z && break || continue
+        done
+        chmod -R 777 Common/Vendors/GitHub/Actions
     
     - name: DotNet
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.sh ${{matrix.FRAMEWORK}} ${{env.DOTNET_DIR}}
