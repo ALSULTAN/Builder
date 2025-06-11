@@ -1,0 +1,32 @@
+name: DDDD
+on:
+  workflow_dispatch:
+    
+env:
+  TITLE: 'Nitaq'
+  PKG: 'alsultan.pos'
+  DOTNET_DIR: ${{github.workspace}}\DotNet
+
+jobs:
+
+  Windows:
+    name: Windows
+    runs-on: windows-2025
+    defaults:
+      run:
+        shell: cmd
+    strategy:
+      fail-fast: false
+
+    steps:
+    
+    - name: Source
+      run: |
+        for /L %%A in (1,1,20) do (
+        	echo Downloading Source Attempt %%A...
+        	if not %%A == 1 sleep 10
+        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z && unzip -q Z && goto :eof
+        )
+
+    - name: Check
+      run: dir
