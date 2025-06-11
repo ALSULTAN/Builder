@@ -6,8 +6,6 @@ env:
   TITLE: 'Nitaq'
   PKG: 'alsultan.pos'
   DOTNET_DIR: ${{github.workspace}}\DotNet
-  DOTNET_VER_MIN: '9.0'
-  DOTNET_VER_FULL: '9.0.5'
 
 jobs:
 
@@ -24,17 +22,17 @@ jobs:
     
     - name: Source
       run: |
-        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetVersionFull=${{env.DOTNET_VER_FULL}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
+        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
         unzip -q source.zip
     
     - name: DotNet
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd windows ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd windows ${{env.DOTNET_DIR}}
     
     - name: Build
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd windows10.0.19041.0 ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd windows10.0.19041.0 ${{env.DOTNET_DIR}}
 
     - name: Upload
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiWindows.cmd ${{env.DOTNET_VER_MIN}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiWindows.cmd
 
   Android:
     name: Android
@@ -49,17 +47,17 @@ jobs:
     
     - name: Source
       run: |
-        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetVersionFull=${{env.DOTNET_VER_FULL}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
+        curl -LksS -A 'ALSULTAN' --retry 5 --retry-connrefused --retry-delay 5 "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
         unzip -q source.zip
     
     - name: DotNet
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.DOTNET_DIR}}
     
     - name: Build
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.DOTNET_DIR}}
 
     - name: Upload
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}} ${{env.DOTNET_VER_MIN}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}}
 
     - name: Publish
       uses: r0adkll/upload-google-play@v1
@@ -91,19 +89,19 @@ jobs:
     
     - name: Source
       run: |
-        curl -Lk -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&SignProfile=${{matrix.PROFILE}}&DotNetVersionFull=${{env.DOTNET_VER_FULL}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
+        curl -Lk -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&SignProfile=${{matrix.PROFILE}}&DotNetDir=${{env.DOTNET_DIR}}" -o source.zip
         unzip -q source.zip && chmod -R 777 Common/Vendors/GitHub/Actions        
     
     - name: DotNet
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.sh ${{matrix.FRAMEWORK}} ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.sh ${{matrix.FRAMEWORK}} ${{env.DOTNET_DIR}}
     
     - name: Security
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/AppleCertificates.sh ${{matrix.PLATFORM}} ${{matrix.PROFILE}}
 
     - name: Build
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh ${{matrix.FRAMEWORK}} ${{env.DOTNET_VER_MIN}} ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh ${{matrix.FRAMEWORK}} ${{env.DOTNET_DIR}}
 
     - name: Publish
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiApple.sh ${{matrix.PLATFORM}} ${{env.DOTNET_VER_MIN}}
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiApple.sh ${{matrix.PLATFORM}}
 
             
