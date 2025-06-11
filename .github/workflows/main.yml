@@ -30,3 +30,6 @@ jobs:
 
     - name: Check
       run: dir
+        du -sh Common
+        du -sh MAUI
+        
