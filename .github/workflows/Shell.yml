@@ -68,7 +68,7 @@ jobs:
       run: ./Scripts/Build/Ubuntu/Build.sh ${{matrix.format}} ${{matrix.arch}} ${{matrix.on_device}} ${{matrix.package}}
 
     - name: Upload
-      run: ./Scripts/Build/Ubuntu/Upload.sh ${{matrix.format}}
+      run: ./Scripts/Build/Ubuntu/Upload.sh ${{matrix.format}} 
       
 
       
