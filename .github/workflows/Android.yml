@@ -31,8 +31,10 @@ jobs:
         for /L %%A in (1,1,20) do (
         	echo Downloading Source Attempt %%A...
         	if not %%A == 1 sleep 10
-        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=AndroidGetSource" -o Z && unzip -q Z && Common\Vendors\GitHub\Actions\AndroidInitialize.cmd ${{inputs.packages}}
-        )   
+        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=AndroidGetSource" -o Z && unzip -q Z && goto :init
+        )
+        :init
+        Common\Vendors\GitHub\Actions\AndroidInitialize.cmd ${{inputs.packages}}
 
   Build:
     needs: Initialize
