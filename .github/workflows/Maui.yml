@@ -29,7 +29,7 @@ jobs:
         )
     
     - name: DotNet
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd windows ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd maui-windows ${{env.DOTNET_DIR}}
     
     - name: Build
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd windows10.0.19041.0 ${{env.DOTNET_DIR}}
@@ -57,7 +57,7 @@ jobs:
         )
     
     - name: DotNet
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.DOTNET_DIR}}
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd maui-android ${{env.DOTNET_DIR}}
     
     - name: Build
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.DOTNET_DIR}}
