@@ -16,6 +16,11 @@ jobs:
     
   Initialize:  
     runs-on: windows-2025
+    defaults:
+      run:
+        shell: cmd
+    strategy:
+      fail-fast: false
     outputs:
       includes: ${{steps.create.outputs.includes}}
 
@@ -33,6 +38,9 @@ jobs:
     needs: Initialize
     name: ${{matrix.package}} (${{matrix.type}}/${{matrix.format}})
     runs-on: windows-2025
+    defaults:
+      run:
+        shell: cmd
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.Initialize.outputs.includes)}}
