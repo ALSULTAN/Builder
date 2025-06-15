@@ -8,6 +8,9 @@ on:
         description: "Packages"
         required: true
         
+env:
+  DOTNET_DIR: ${{github.workspace}}\DotNet
+
 concurrency:
  group: ${{github.workflow}}-${{inputs.packages}}
  cancel-in-progress: true
@@ -38,7 +41,7 @@ jobs:
 
   Build:
     needs: Initialize
-    name: ${{matrix.package}} (${{matrix.type}}/${{matrix.format}})
+    name: ${{matrix.package}} (${{matrix.format}})
     runs-on: windows-2025
     defaults:
       run:
@@ -50,6 +53,17 @@ jobs:
     steps:
     - name: Source
       run: |
-        echo ${{matrix.package}}
-        echo ${{matrix.type}}
-        echo ${{matrix.format}}
+        for /L %%A in (1,1,20) do (
+        	echo Downloading Source Attempt %%A...
+        	if not %%A == 1 sleep 10
+        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=AndroidGetSource&Package=${{matrix.package}}&AAB=${{matrix.aab}}&DotNetDir=DOTNET_DIR" -o Z && unzip -q Z && goto :eof
+        )
+
+    - name: DotNet
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd android ${{env.DOTNET_DIR}}
+
+    - name: Build
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildAndroid.cmd ${{env.DOTNET_DIR}}
+
+    - name: Upload
+      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishAndroid.cmd ${{matrix.package}} ${{matrix.format}}
