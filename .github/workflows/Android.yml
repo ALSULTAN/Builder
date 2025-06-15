@@ -1,0 +1,45 @@
+name: Android Builder
+run-name: ${{inputs.packages}}
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: "Packages"
+        required: true
+        
+concurrency:
+ group: ${{github.workflow}}-${{inputs.packages}}
+ cancel-in-progress: true
+
+jobs:
+    
+  Initialize:  
+    runs-on: windows-2025
+    outputs:
+      includes: ${{steps.create.outputs.includes}}
+
+    steps:
+    - name: Create Builders
+      id: create
+      run: |
+        for /L %%A in (1,1,20) do (
+        	echo Downloading Source Attempt %%A...
+        	if not %%A == 1 sleep 10
+        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=AndroidGetSource" -o Z && unzip -q Z && Common\Vendors\GitHub\Actions\AndroidInitialize.cmd ${{inputs.packages}}
+        )   
+
+  Build:
+    needs: Initialize
+    name: ${{matrix.package}} (${{matrix.type}}/${{matrix.format}})
+    runs-on: windows-2025
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.Initialize.outputs.includes)}}
+
+    steps:
+    - name: Source
+      run: |
+        echo ${{matrix.package}}
+        echo ${{matrix.type}}
+        echo ${{matrix.format}}
