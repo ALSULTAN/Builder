@@ -16,31 +16,8 @@ concurrency:
  cancel-in-progress: true
 
 jobs:
-    
-  Initialize:  
-    runs-on: windows-2025
-    defaults:
-      run:
-        shell: cmd
-    strategy:
-      fail-fast: false
-    outputs:
-      includes: ${{steps.create.outputs.includes}}
-
-    steps:
-    - name: Create Builders
-      id: create
-      run: |
-        for /L %%A in (1,1,20) do (
-        	echo Downloading Source Attempt %%A...
-        	if not %%A == 1 sleep 10
-        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=AndroidGetSource" -o Z && unzip -q Z && goto :init
-        )
-        :init
-        Common\Vendors\GitHub\Actions\AndroidInitialize.cmd ${{inputs.packages}}
-
+     
   Build:
-    needs: Initialize
     name: ${{matrix.package}} (${{matrix.format}})
     runs-on: windows-2025
     defaults:
