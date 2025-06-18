@@ -65,5 +65,5 @@ jobs:
     - name: Build
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildAndroid.cmd ${{env.DOTNET_DIR}}
 
-    - name: Upload
+    - name: Publish
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishAndroid.cmd ${{matrix.package}} ${{matrix.format}}
