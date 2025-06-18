@@ -1,12 +1,7 @@
 name: androider
-run-name: ${{inputs.packages}}
 
 on:
   workflow_dispatch:
-    inputs:
-      packages:
-        description: "Packages"
-        required: true
         
 env:
   DOTNET_DIR: ${{github.workspace}}\DotNet
@@ -18,14 +13,13 @@ concurrency:
 jobs:
      
   Build:
-    name: ${{matrix.package}} (${{matrix.format}})
+    name: ddd
     runs-on: windows-2025
     defaults:
       run:
         shell: cmd
     strategy:
       fail-fast: false
-      matrix: ${{fromJson(needs.Initialize.outputs.includes)}}
 
     steps:
     - name: Source
