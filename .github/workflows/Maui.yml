@@ -34,7 +34,7 @@ jobs:
     - name: Build
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd windows10.0.19041.0 ${{env.DOTNET_DIR}}
 
-    - name: Upload
+    - name: Publish
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiWindows.cmd
 
   Android:
@@ -62,15 +62,9 @@ jobs:
     - name: Build
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.DOTNET_DIR}}
 
-    - name: Upload
+    - name: Publish
       run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}}
 
-    - name: Publish
-      uses: r0adkll/upload-google-play@v1
-      with:
-        serviceAccountJsonPlainText: ${{secrets.AGPA}}
-        packageName: ${{env.PKG}}
-        releaseFiles: package.aab
 
   Apple:
     name: ${{matrix.NAME}}
