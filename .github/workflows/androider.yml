@@ -16,18 +16,7 @@ jobs:
     
     - name: Source
       run: |
-        for i in {1..20}; do
-            echo "Downloading Source Attempt ${i}..."
-            test $i != 1 && sleep 10
-            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=AndroidGetSource&Package=alsultan.hijrical&AAB=true&DotNetDir=/alsultan/dd" -o Z || continue
-            unzip -q Z && break || continue
-        done
-        curl -LksS --retry 5 --retry-delay 30 --retry-all-errors https://dot.net/v1/dotnet-install.sh > dotnet-install.sh
-        chmod 777 dotnet-install.sh
-        ./dotnet-install.sh --install-dir ${{github.workspace}}/DotNet --channel 9.0
-        ${{github.workspace}}/DotNet/dotnet workload restore Mobile/Mobile.csproj
-        cd Mobile
-        ${{github.workspace}}/DotNet/dotnet publish
+        find /usr/local/lib/android/sdk -name "bundletool.jar"
         
 
 
