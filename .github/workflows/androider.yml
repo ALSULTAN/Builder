@@ -16,7 +16,7 @@ jobs:
     
     - name: Source
       run: |
-        find /usr/local/lib/android/sdk -name "bundletool.jar"
+        find /usr/local/lib/android/sdk
         
 
 
