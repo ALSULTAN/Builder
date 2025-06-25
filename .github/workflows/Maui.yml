@@ -52,7 +52,7 @@ jobs:
       run: |
         curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.platform}}&Package=${{matrix.package}}&DotNetDir=${{env.dotnet}}" -o Z
         unzip -q Z
-        chmod -R 777 chmod -R 777 Common/Vendors/GitHub/Actions
+        chmod -R 777 Common/Vendors/GitHub/Actions
 
     - name: DotNet
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.${{matrix.ext}} ${{matrix.workload}} ${{env.dotnet}}
