@@ -50,7 +50,7 @@ jobs:
     steps:
     - name: Source
       run: |
-        curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.platform}}&Package=${{matrix.package}}&DotNetDir=${{env.dotnet}}" -o Z
+        curl -LksS -A 'ALSULTAN' --fail --retry-all-errors --retry 10 --retry-delay 5 --connect-timeout 30 --retry-max-time 120 --speed-limit 100 --speed-time 60 "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.platform}}&Package=${{matrix.package}}&DotNetDir=${{env.dotnet}}" -o Z
         unzip -q Z
         chmod -R 777 Common/Vendors/GitHub/Actions
 
