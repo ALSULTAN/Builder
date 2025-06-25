@@ -1,112 +1,61 @@
 name: Maui Builder
+run-name: ${{inputs.packages}}
+
 on:
   workflow_dispatch:
-    
+    inputs:
+      packages:
+        description: "Packages"
+        required: true
+        
 env:
-  TITLE: 'Nitaq'
-  PKG: 'alsultan.pos'
-  DOTNET_DIR: ${{github.workspace}}\DotNet
+  DOTNET_DIR: ${{github.workspace}}/DotNet
+
+concurrency:
+ group: ${{github.workflow}}-${{inputs.packages}}
+ cancel-in-progress: true
 
 jobs:
-
-  Windows:
-    name: Windows
+    
+  Initialize:  
     runs-on: windows-2025
     defaults:
       run:
         shell: cmd
     strategy:
       fail-fast: false
+    outputs:
+      includes: ${{steps.create.outputs.includes}}
 
     steps:
-    
-    - name: Source
+    - name: Create Builders
+      id: create
       run: |
         for /L %%A in (1,1,20) do (
         	echo Downloading Source Attempt %%A...
         	if not %%A == 1 sleep 10
-        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=windows&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z && unzip -q Z && goto :eof
+        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource" -o Z && unzip -q Z && goto :init
         )
-    
-    - name: DotNet
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd maui-windows ${{env.DOTNET_DIR}}
-    
-    - name: Build
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd windows10.0.19041.0 ${{env.DOTNET_DIR}}
+        :init
+        Common\Vendors\GitHub\Actions\MauiInitialize.cmd ${{inputs.packages}}
 
-    - name: Publish
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiWindows.cmd
-
-  Android:
-    name: Android
-    runs-on: windows-2025
-    defaults:
-      run:
-        shell: cmd
+  Build:
+    needs: Initialize
+    name: ${{matrix.package}} (${{matrix.platform}})
+    runs-on: ${{matrix.runner}}
+    # defaults:
+    #   run:
+    #     shell: cmd
     strategy:
       fail-fast: false
+      matrix: ${{fromJson(needs.Initialize.outputs.includes)}}
 
     steps:
-    
     - name: Source
       run: |
-        for /L %%A in (1,1,20) do (
-        	echo Downloading Source Attempt %%A...
-        	if not %%A == 1 sleep 10
-        	curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=android&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z && unzip -q Z && goto :eof
-        )
-    
-    - name: DotNet
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\InstallDotNet.cmd maui-android ${{env.DOTNET_DIR}}
-    
-    - name: Build
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\BuildMaui.cmd android ${{env.DOTNET_DIR}}
+        curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.platform}}&Package=${{matrix.package}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z
+        unzip -q Z
 
-    - name: Publish
-      run: ${{github.workspace}}\Common\Vendors\GitHub\Actions\PublishMauiAndroid.cmd ${{env.PKG}}
+    - name: Test
+      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/a.${{matrix.ext}} android ${{env.DOTNET_DIR}}
 
-
-  Apple:
-    name: ${{matrix.NAME}}
-    runs-on: macos-15
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-    
-          - NAME: MacOS
-            PLATFORM: macos
-            FRAMEWORK: maccatalyst
-            PROFILE: NitaqPosMac
-
-          - NAME: iOS
-            PLATFORM: ios
-            FRAMEWORK: ios
-            PROFILE: NitaqPos
-
-
-    steps:
-    
-    - name: Source
-      run: |
-        for i in {1..20}; do
-            echo "Downloading Source Attempt ${i}..."
-            test $i != 1 && sleep 10
-            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.PLATFORM}}&AppTitle=${{env.TITLE}}&AppPackage=${{env.PKG}}&SignProfile=${{matrix.PROFILE}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z || continue
-            unzip -q Z && break || continue
-        done
-        chmod -R 777 Common/Vendors/GitHub/Actions
-    
-    - name: DotNet
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/InstallDotNet.sh ${{matrix.FRAMEWORK}} ${{env.DOTNET_DIR}}
-    
-    - name: Security
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/AppleCertificates.sh ${{matrix.PLATFORM}} ${{matrix.PROFILE}}
-
-    - name: Build
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.sh ${{matrix.FRAMEWORK}} ${{env.DOTNET_DIR}}
-
-    - name: Publish
-      run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMauiApple.sh ${{matrix.PLATFORM}}
-
-            
