@@ -55,6 +55,7 @@ jobs:
       run: |
         curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=MauiGetSource&Platform=${{matrix.platform}}&Package=${{matrix.package}}&DotNetDir=${{env.DOTNET_DIR}}" -o Z
         unzip -q Z
+        chmod -R 777 .
 
     - name: Test
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/a.${{matrix.ext}} android ${{env.DOTNET_DIR}}
