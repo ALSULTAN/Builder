@@ -61,7 +61,7 @@ jobs:
       run: ./Scripts/Build/Ubuntu/Prepare.sh ${{matrix.package}}
 
     - name: Docker
-      if: ${{matrix.big_pkg == 'false' }}
+      if: ${{matrix.big_pkg == 'false' || matrix.on_device == 'true'}}
       run: ./Scripts/Build/Ubuntu/Docker.sh init ${{matrix.arch}} ${{matrix.on_device}}
 
     - name: Build
