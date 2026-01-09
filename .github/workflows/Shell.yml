@@ -52,8 +52,8 @@ jobs:
         done
         chmod -R 777 .
 
-    - name: ZRam
-      uses: ./.github/ZRam
+    - name: ZRAM
+      uses: ./.github/zram
       with:
         algorithm: zstd
         size: 16G
