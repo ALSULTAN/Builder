@@ -52,6 +52,14 @@ jobs:
         done
         chmod -R 777 .
 
+    - name: ZRam
+      uses: ./.github/actions/zram
+      with:
+        algorithm: zstd
+        size: 16G
+        priority: 100
+        device_name: /dev/zram0
+
     - name: Clean
       if: ${{matrix.big_pkg == 'true' }}
       run: ./Scripts/Build/Ubuntu/Clean.sh ${{matrix.package}}
