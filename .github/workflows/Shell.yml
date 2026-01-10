@@ -52,9 +52,6 @@ jobs:
         done
         chmod -R 777 .
 
-    # - name: CheckOut
-    #   uses: actions/checkout@v6
-
     - name: Memory
       uses: ./Scripts/Build/Tools/ZRAM
       with:
