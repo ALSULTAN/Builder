@@ -52,7 +52,10 @@ jobs:
         done
         chmod -R 777 .
 
-    - name: ZRAM
+    - name: CheckOut
+      uses: actions/checkout@v6
+
+    - name: Memory
       uses: ./.github/actions/zram
       with:
         algorithm: zstd
