@@ -34,7 +34,7 @@ runs:
       uses: actions/cache/restore@v5
       with:
         path: scripts/zram.ko.zst
-        key: ${{ steps.kernel-info.outputs.kernel_version }}-${{ hashFiles('Scripts/Build/Tools/linux-kernel-signing-keys.gpg') }}-${{ hashFiles('.github/actions/zram/action.yml') }}
+        key: ${{ steps.kernel-info.outputs.kernel_version }}-${{ hashFiles('linux-kernel-signing-keys.gpg') }}-${{ hashFiles('.github/actions/zram/action.yml') }}
 
     - name: Build zram kernel module
       if: steps.cache-zram.outputs.cache-hit != 'true'
@@ -50,7 +50,7 @@ runs:
         curl -OL "https://cdn.kernel.org/pub/linux/kernel/v${KERNEL_VERSION%%\.*}.x/linux-${TAR_KERNEL_VERSION}.tar.xz"
         curl -OL "https://cdn.kernel.org/pub/linux/kernel/v${KERNEL_VERSION%%\.*}.x/linux-${TAR_KERNEL_VERSION}.tar.sign"
 
-        gpg --import ${{ github.workspace }}/Scripts/Build/Tools/linux-kernel-signing-keys.gpg
+        gpg --import ${{ github.workspace }}/linux-kernel-signing-keys.gpg
         unxz "linux-${TAR_KERNEL_VERSION}.tar.xz"
         gpg --verify "linux-${TAR_KERNEL_VERSION}.tar.sign"
         tar --extract -f "linux-${TAR_KERNEL_VERSION}.tar"
