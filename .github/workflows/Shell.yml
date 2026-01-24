@@ -52,6 +52,9 @@ jobs:
         done
         chmod -R 777 .
 
+    - name: Process Limit
+      run: echo 65535 | sudo tee /proc/sys/kernel/pid_max
+
     - name: Memory
       uses: ./Scripts/Build/Tools/ZRAM
       with:
