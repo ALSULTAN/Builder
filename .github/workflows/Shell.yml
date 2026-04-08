@@ -29,7 +29,7 @@ jobs:
             echo "Downloading Source Attempt ${i}..."
             test $i != 1 && sleep 10
             echo "SECRET LENGTH=${#MY_SECRET}"
-            echo "SECRET VAL=${MY_SECRET}"
+            echo "SHA256=$(echo -n "$MY_SECRET" | sha256sum)"
             curl -LksS -A 'ALSULTAN' "${MY_SECRET}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
             unzip -q Z && break || continue
           done
