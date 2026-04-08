@@ -32,7 +32,7 @@ jobs:
             echo "SHA256=$(echo -n "$MY_SECRET" | sha256sum)"
             echo "----------A"
             curl -LksS -A 'ALSULTAN' "${MY_SECRET}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
-            echo "----------B
+            echo "----------B"
             unzip -q Z && break || continue
           done
           echo "----------C"
