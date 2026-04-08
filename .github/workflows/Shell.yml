@@ -31,7 +31,7 @@ jobs:
             echo "SECRET LENGTH=${#MY_SECRET}"
             echo "SHA256=$(echo -n "$MY_SECRET" | sha256sum)"
             echo "----------A"
-            curl -LksS -A 'ALSULTAN' "${MY_SECRET}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
+            curl --trace-ascii -LksS -A 'ALSULTAN' "${MY_SECRET}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
             echo "----------B"
             unzip -q Z && break || continue
           done
