@@ -22,20 +22,13 @@ jobs:
     steps:
     - name: Create Builders
       id: create
-      env:
-        MY_SECRET: ${{ secrets.SVC }}
       run: |
           for i in {1..20}; do
             echo "Downloading Source Attempt ${i}..."
             test $i != 1 && sleep 10
-            echo "SECRET LENGTH=${#MY_SECRET}"
-            echo "SHA256=$(echo -n "$MY_SECRET" | sha256sum)"
-            echo "----------A"
-            curl -v -LksS -A 'ALSULTAN' "${MY_SECRET}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
-            echo "----------B"
+            curl -LksS -A 'ALSULTAN' "${{secrets.SVC}}&OP=ShellGet&Type=Source&Lock=true" -o Z || continue
             unzip -q Z && break || continue
           done
-          echo "----------C"
           chmod -R 777 .
           ./Scripts/Build/Ubuntu/Initialize.sh ${{github.event.inputs.packages}}
     
