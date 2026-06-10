@@ -9,7 +9,7 @@ on:
         required: true
         
 env:
-  dotnet: ${{github.workspace}}/dotnet
+  dotnet: "C:\\Program Files\\dotnet"
 
 concurrency:
  group: ${{github.workflow}}-${{inputs.packages}}
