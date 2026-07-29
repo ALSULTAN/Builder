@@ -7,7 +7,10 @@ on:
       packages:
         description: "Packages"
         required: true
-        
+     
+permissions:
+  contents: write
+  
 env:
   dotnet: ${{github.workspace}}/dotnet
 
@@ -61,6 +64,8 @@ jobs:
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/BuildMaui.${{matrix.ext}} ${{matrix.workload}} ${{env.dotnet}} ${{matrix.package}}
 
     - name: Publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: ${{github.workspace}}/Common/Vendors/GitHub/Actions/PublishMaui_${{matrix.platform}}.${{matrix.ext}} ${{matrix.package}}
 
 
