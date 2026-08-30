@@ -37,18 +37,16 @@ jobs:
     needs: Initialize
     name: ${{matrix.package}} (${{matrix.arch}}/${{matrix.format}})
     runs-on: ${{matrix.runner}}
+    env:
+      GITHUB_RUN_ID: ${{ github.run_id }}
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+      GITHUB_REF: ${{ github.ref }}
+      GITHUB_SHA: ${{ github.sha }}
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.Initialize.outputs.includes)}}
 
-  env:
-    GITHUB_RUN_ID: ${{github.run_id}}
-    GITHUB_RUN_NUMBER: ${{github.run_number}}
-    GITHUB_REF: ${{github.ref}}
-    GITHUB_SHA: ${{github.sha}}
-
-  strategy:
-    fail-fast: false
-    matrix: ${{fromJson(needs.Initialize.outputs.includes)}}
-
-  steps:
+    steps:
     - name: Source
       run: |
         for i in {1..20}; do
