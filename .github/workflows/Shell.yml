@@ -59,11 +59,6 @@ jobs:
 
     - name: Memory
       uses: ./Scripts/Build/Tools/ZRAM
-      with:
-        algorithm: zstd
-        size: 16G
-        priority: 100
-        device_name: /dev/zram0
 
     - name: Clean
       if: ${{matrix.big_pkg == 'true' }}
